@@ -132,7 +132,7 @@ import teamRoutes from './routes/teamRoutes';
 import projectRoutes from './routes/projectRoutes';
 import taskRoutes from './routes/taskRoutes';
 import { authMiddleware } from './middleware/authMiddleware';
-import { setupRealtimeSockets } from '../src/socket/taskSocket'; // ← FIXED PATH
+import { setupRealtimeSockets } from './socket'; // ← FIXED PATH
 
 const app = express();
 const server = http.createServer(app);
@@ -144,7 +144,7 @@ const io = new Server(server, {
   cors: { origin: '*', methods: ['GET', 'POST'] },
 });
 app.set('io', io);
-
+setupRealtimeSockets(io);
 
 
 app.get('/', (req, res) => {
@@ -156,14 +156,16 @@ app.use('/api/teams', authMiddleware, teamRoutes);
 app.use('/api/projects', authMiddleware, projectRoutes);
 app.use('/api/tasks', authMiddleware, taskRoutes);
 
-mongoose.connect(config.mongoURI)
+mongoose.connect(process.env.MONGO_URI!)
   .then(() => console.log('MongoDB connected'))
   .catch(err => console.error('MongoDB error:', err));
 
-setupRealtimeSockets(io);
 
-server.listen(config.port, () => {
-  console.log(`Server running on http://localhost:${config.port}`);
+const PORT = process.env.PORT || 3000;
+
+server.listen(PORT, () => {
+ console.log(`Server running on http://localhost:${PORT}`);
+  console.log(`WebSocket: ws://localhost:${PORT}`);
 });
 
 export default app;
