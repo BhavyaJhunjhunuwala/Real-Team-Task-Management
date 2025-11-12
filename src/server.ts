@@ -134,8 +134,12 @@ import taskRoutes from './routes/taskRoutes';
 import { authMiddleware } from './middleware/authMiddleware';
 import { setupRealtimeSockets } from './socket'; // ← FIXED PATH
 
+import type {   Request, Response } from 'express';
+
+
 const app = express();
 const server = http.createServer(app);
+app.use(cors());
 
 // app.use(cors({ origin: '*', credentials: true }));
 app.use(express.json());
@@ -147,9 +151,10 @@ app.set('io', io);
 setupRealtimeSockets(io);
 
 
-app.get('/', (req, res) => {
+app.get('/', (req: Request, res: Response) => {
   res.send('Server is running');
 });
+
 
 app.use('/api/auth', authRoutes);
 app.use('/api/teams', authMiddleware, teamRoutes);
