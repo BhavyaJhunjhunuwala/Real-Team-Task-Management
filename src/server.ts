@@ -133,6 +133,8 @@ import projectRoutes from './routes/projectRoutes';
 import taskRoutes from './routes/taskRoutes';
 import { authMiddleware } from './middleware/authMiddleware';
 import { setupRealtimeSockets } from './socket'; // ← FIXED PATH
+import swaggerRoute from "./swagger";
+
 
 import type {   Request, Response } from 'express';
 
@@ -160,6 +162,9 @@ app.use('/api/auth', authRoutes);
 app.use('/api/teams', authMiddleware, teamRoutes);
 app.use('/api/projects', authMiddleware, projectRoutes);
 app.use('/api/tasks', authMiddleware, taskRoutes);
+
+
+app.use(swaggerRoute);
 
 mongoose.connect(process.env.MONGO_URI!)
   .then(() => console.log('MongoDB connected'))
